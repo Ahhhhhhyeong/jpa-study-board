@@ -4,6 +4,8 @@ import com.example.board.service.BoardService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 @Controller 
@@ -14,6 +16,14 @@ public class BoardController {
     BoardController(BoardService boardService) {
         this.boardService = boardService;
     }
+
+    // call board
+    @GetMapping("/board")
+    public String getMethodName(@RequestParam String param) {
+        return new String();
+    }
+    
+
 
     // save board
     @PostMapping("/board/write")
