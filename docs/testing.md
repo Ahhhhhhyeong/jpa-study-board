@@ -5,7 +5,7 @@
 `src/test/java/com/example/board/controller/BoardControllerTest.java`는
 `POST /board/write` 요청을 처리하는 컨트롤러 테스트다.
 
-- 제목과 내용을 전달하면 `BoardService.save()`를 호출하는지 확인한다.
+- 제목, 내용, 작성자, 비밀번호를 전달하면 `BoardService.save()`를 호출하는지 확인한다.
 - 응답이 `302`이고 이동 주소가 `/board/list`인지 확인한다.
 - 제목이나 내용이 누락되면 `400` 응답을 반환하고 서비스를 호출하지 않는지 확인한다.
 
@@ -108,11 +108,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 void writeBoard() throws Exception {
     mockMvc.perform(post("/board/write")
                     .param("title", "첫 번째 게시글")
-                    .param("content", "JPA 공부 중입니다."))
+                    .param("content", "JPA 공부 중입니다.")
+                    .param("writer", "작성자")
+                    .param("password", "test-password"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/board/list"));
 
-    verify(boardService).save("첫 번째 게시글", "JPA 공부 중입니다.");
+    verify(boardService).save("첫 번째 게시글", "JPA 공부 중입니다.", "작성자", "test-password");
 }
 ```
 
@@ -149,7 +151,9 @@ src/test/java/com/example/board/controller/BoardControllerTest.java
 @DisplayName("제목이 누락되면 400 응답을 반환하고 저장하지 않는다")
 void writeWithoutTitle() throws Exception {
     mockMvc.perform(post("/board/write")
-                    .param("content", "내용만 전달합니다."))
+                    .param("content", "내용만 전달합니다.")
+                    .param("writer", "작성자")
+                    .param("password", "test-password"))
             .andExpect(status().isBadRequest());
 
     verifyNoInteractions(boardService);

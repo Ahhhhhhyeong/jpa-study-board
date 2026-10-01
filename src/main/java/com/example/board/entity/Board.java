@@ -25,6 +25,10 @@ public class Board {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    private String writer;
+
+    private String password;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -34,9 +38,11 @@ public class Board {
     protected Board() {
     }
 
-    public Board(String title, String content) {
+    public Board(String title, String content, String writer, String password) {
         this.title = title;
         this.content = content;
+        this.writer = writer;
+        this.password = password;
     }
 
     @PrePersist
@@ -66,6 +72,14 @@ public class Board {
 
     public String getContent() {
         return content;
+    }
+
+    public String getWriter() {
+        return writer;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public LocalDateTime getCreatedAt() {
