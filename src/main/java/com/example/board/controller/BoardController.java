@@ -10,6 +10,8 @@ import com.example.board.entity.Board;
 import org.springframework.ui.Model;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.NoSuchElementException;
 
 
 
@@ -21,8 +23,6 @@ public class BoardController {
     BoardController(BoardService boardService) {
         this.boardService = boardService;
     }
-
-    
 
 
     @GetMapping("/board/write")
@@ -63,5 +63,18 @@ public class BoardController {
 
         return "redirect:/board/list";
     }
-    
+
+    @PostMapping("/board/delete/{id}")
+    public String delete(@PathVariable Long id, @RequestParam String password,
+                         RedirectAttributes redirectAttributes) {
+        try {
+            if (!boardService.delete(id, password)) {
+                redirectAttributes.addFlashAttribute("deleteError", "비밀번호가 일치하지 않습니다.");
+                return "redirect:/board/view/" + id;
+            }
+        } catch (NoSuchElementException exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage(), exception);
+        }
+        return "redirect:/board/list";
+    }
 }

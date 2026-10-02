@@ -19,6 +19,8 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import java.util.NoSuchElementException;
 
 @WebMvcTest(BoardController.class)
 class BoardControllerTest {
@@ -28,6 +30,45 @@ class BoardControllerTest {
 
     @MockitoBean
     private BoardService boardService;
+
+    @Test
+    void successfulDeleteRedirectsToList() throws Exception {
+        when(boardService.delete(1L, "secret")).thenReturn(true);
+        mockMvc.perform(post("/board/delete/1").param("password", "secret"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/board/list"));
+        verify(boardService).delete(1L, "secret");
+    }
+
+    @Test
+    void incorrectPasswordRedirectsToBoardWithError() throws Exception {
+        mockMvc.perform(post("/board/delete/1").param("password", "wrong"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/board/view/1"))
+                .andExpect(flash().attribute("deleteError", "비밀번호가 일치하지 않습니다."));
+    }
+
+    @Test
+    void deleteMissingBoardReturnsNotFound() throws Exception {
+        when(boardService.delete(999L, "secret"))
+                .thenThrow(new NoSuchElementException("게시글이 없습니다."));
+        mockMvc.perform(post("/board/delete/999").param("password", "secret"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteWithoutPasswordReturnsBadRequest() throws Exception {
+        mockMvc.perform(post("/board/delete/1"))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(boardService);
+    }
+
+    @Test
+    void getRequestCannotDeleteBoard() throws Exception {
+        mockMvc.perform(get("/board/delete/1").param("password", "secret"))
+                .andExpect(status().isMethodNotAllowed());
+        verifyNoInteractions(boardService);
+    }
 
     @Test
     void viewDisplaysRequestedBoard() throws Exception {

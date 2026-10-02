@@ -43,6 +43,20 @@
             font-size: 14px;
         }
         .button.list { background-color: #6c757d; margin-right: 8px; }
+        .button-remove {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 6px;
+            background-color: crimson;
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            border: 0;
+            cursor: pointer;
+        }
+        .delete-form { margin-top: 20px; text-align: right; }
+        .delete-form input { padding: 10px; margin: 0 8px; }
+        .error { color: crimson; }
     </style>
 </head>
 <body>
@@ -72,6 +86,15 @@
             <a class="button list" href="${pageContext.request.contextPath}/board/list">목록</a>
             <a class="button" href="${pageContext.request.contextPath}/board/write">글 작성</a>
         </div>
+        <c:if test="${not empty deleteError}">
+            <p class="error" role="alert"><c:out value="${deleteError}" /></p>
+        </c:if>
+        <form class="delete-form" method="post"
+    action="${pageContext.request.contextPath}/board/delete/${board.id}">
+            <label for="delete-password">게시글 비밀번호</label>
+            <input id="delete-password" type="password" name="password" required autocomplete="off">
+            <button class="button-remove" type="submit">삭제</button>
+        </form>
 	</main>
     <script>
         document.querySelectorAll('.date').forEach(element => {

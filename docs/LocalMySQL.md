@@ -17,6 +17,7 @@ Spring Boot에서 연결하려면 `local` 프로필로 실행합니다.
 ```
 
 IDE에서는 활성 프로필에 `local`을 지정하거나 환경 변수 `SPRING_PROFILES_ACTIVE=local`을 설정합니다.
+VS Code의 `Spring Boot-BoardApplication<board>` 실행 구성에는 `local` 프로필이 지정되어 있습니다.
 
 MySQL 콘솔 접속:
 
@@ -25,7 +26,7 @@ docker compose exec mysql mysql -u board -p board
 ```
 
 비밀번호 입력 시 `board_local`을 입력합니다. 접속 후 `SHOW TABLES;`로 테이블을 확인하고 `exit`로 나옵니다.
-테이블은 자동 생성하지 않으므로 SQL이나 별도 JPA 설정으로 생성해야 합니다.
+`local` 프로필은 `spring.jpa.hibernate.ddl-auto=update`를 사용하므로 앱 실행 시 엔티티에 맞춰 테이블을 생성·갱신합니다.
 
 상태 확인 및 종료:
 

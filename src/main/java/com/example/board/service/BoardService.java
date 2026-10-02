@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.board.entity.Board;
 import com.example.board.repository.BoardRepository;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service 
 public class BoardService {
@@ -40,5 +41,18 @@ public class BoardService {
     @Transactional(readOnly = true)
     public Board findById(Long id){
         return boardRepository.findById(id);
+    }
+
+    @Transactional
+    public boolean delete(Long id, String password) {
+        Board board = boardRepository.findById(id);
+        if (board == null) {
+            throw new NoSuchElementException("게시글이 없습니다.");
+        }
+        if (password == null || password.isBlank() || !password.equals(board.getPassword())) {
+            return false;
+        }
+        boardRepository.delete(board);
+        return true;
     }
 }

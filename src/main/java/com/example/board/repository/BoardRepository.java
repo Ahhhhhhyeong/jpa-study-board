@@ -18,8 +18,6 @@ public class BoardRepository {
         em.persist(board);
     }
 
-    
-
     public Board findById(Long id){
         return em.find(Board.class, id);
     }
